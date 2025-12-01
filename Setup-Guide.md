@@ -6,8 +6,8 @@ This project uses Docker Compose to orchestrate three services: Frontend, Backen
 
 - Docker and Docker Compose installed
 - Docker images pushed to Docker Hub:
-  - Frontend image: `fe:latest` (or specify tag via `FRONTEND_TAG`)
-  - Backend image: `be:latest` (or specify tag via `BACKEND_TAG`)
+  - Frontend image: `outbounds/vstellar-report:frontend`
+  - Backend image: `outbounds/vstellar-report:backend`
 
 ## Quick Start
 
@@ -18,8 +18,8 @@ This project uses Docker Compose to orchestrate three services: Frontend, Backen
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres123
 POSTGRES_DB=vstellar-report-db
-BACKEND_IMAGE=be
-FRONTEND_IMAGE=fe
+BACKEND_IMAGE=outbounds/vstellar-report:backend
+FRONTEND_IMAGE=outbounds/vstellar-report:frontend
 SECRET_JWT=your-secret-jwt-key
 REFRESH_JWT=your-refresh-jwt-key
 ```
@@ -31,7 +31,7 @@ docker-compose up -d
 ```
 
 3. **Access the application**:
-   - Frontend: http://localhost:4200
+   - Frontend: http://localhost:4201
    - Backend API: http://localhost:3000
    - PostgreSQL: localhost:5432
 
@@ -39,21 +39,21 @@ docker-compose up -d
 
 ### PostgreSQL (`postgres`)
 - **Image**: `postgres:14`
-- **Container Name**: `cr-postgres`
+- **Container Name**: `vstellar-report-db-postgres`
 - **Port**: 5432 (configurable via `POSTGRES_PORT`)
 - **Data Persistence**: Data is stored in a Docker volume `postgres_data`
 
 ### Backend (`backend`)
-- **Image**: From Docker Hub (default: `be:latest`)
+- **Image**: From Docker Hub (`outbounds/vstellar-report:backend`)
 - **Container Name**: `vstellar-report-backend`
 - **Port**: 3000 (configurable via `BACKEND_PORT`)
 - **Database Connection**: Uses service name `postgres` to connect to PostgreSQL
 - **Environment Variables**: See `cr-backend/ENV_VARIABLES.md`
 
 ### Frontend (`frontend`)
-- **Image**: From Docker Hub (default: `fe:latest`)
+- **Image**: From Docker Hub (`outbounds/vstellar-report:frontend`)
 - **Container Name**: `vstellar-report-frontend`
-- **Port**: 4200 (configurable via `FRONTEND_PORT`)
+- **Port**: 4201 (configurable via `FRONTEND_PORT`)
 - **API Connection**: Connects to backend via `http://localhost:3000/v1`
 
 ## Network
@@ -69,8 +69,8 @@ See `cr-backend/ENV_VARIABLES.md` for a complete list of environment variables.
 
 Key variables:
 - `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`: Database credentials
-- `BACKEND_IMAGE`, `BACKEND_TAG`: Backend Docker image name and tag
-- `FRONTEND_IMAGE`, `FRONTEND_TAG`: Frontend Docker image name and tag
+- `BACKEND_IMAGE`: Backend Docker image name (`outbounds/vstellar-report:backend`)
+- `FRONTEND_IMAGE`: Frontend Docker image name (`outbounds/vstellar-report:frontend`)
 - `SECRET_JWT`, `REFRESH_JWT`: JWT secret keys (change in production!)
 - `BACKEND_PORT`, `FRONTEND_PORT`: Exposed ports
 
@@ -109,7 +109,7 @@ docker-compose ps
    - Frontend environment file uses `localhost:3000` (browser-side connection)
 
 3. **Port conflicts**:
-   - Change ports in `.env` file (e.g., `BACKEND_PORT=3001`, `FRONTEND_PORT=4201`)
+   - Change ports in `.env` file (e.g., `BACKEND_PORT=3001`, `FRONTEND_PORT=4202`)
 
 ## Notes
 

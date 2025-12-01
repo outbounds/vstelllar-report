@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   # PostgreSQL Database Service
   postgres:
     image: postgres:14
-    container_name: vstellar-report-postgres
+    container_name: vstellar-report-db-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -92,7 +90,7 @@ services:
       - vstellar-report-network
 
 networks:
-  cr-network:
+  vstellar-report-network:
     driver: bridge
 
 volumes:
