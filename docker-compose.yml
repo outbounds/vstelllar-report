@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database Service
+  postgres:
+    image: postgres:14
+    container_name: vstellar-report-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: vstellar-report-db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - vstellar-report-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend Service
+  backend:
+    image: outbounds/vstellar-report:backend
+    container_name: vstellar-report-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      # Node Environment
+      NODE_ENV: production
+      PORT: 3000
+      
+      # Database Configuration
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      DB_NAME: vstellar-report-db
+      DB_PORT: 5432
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/vstellar-report-db
+      
+      # JWT Configuration (CHANGE THESE IN PRODUCTION!)
+      SECRET_JWT: your-secret-jwt-key-change-this
+      REFRESH_JWT: your-refresh-jwt-key-change-this
+      
+      # Application Configuration
+      APP_VERSION: V1
+      ENV: production
+      SERVER_URL: http://backend:3000
+      
+      # Email Configuration (Optional - leave empty if not needed)
+      EMAIL_USER: ""
+      EMAIL_PASS: ""
+      EMAIL_HOST: smtp.gmail.com
+      EMAIL_PORT: 465
+      
+      # API Token (Optional - leave empty if not needed)
+      API_TOKEN: ""
+    networks:
+      - vstellar-report-network
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 || r.statusCode === 401 || r.statusCode === 404 ? 0 : 1)}).on('error', () => process.exit(1))\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Service
+  frontend:
+    image: outbounds/vstellar-report:frontend
+    container_name: vstellar-report-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      # Maps host port 4201 to container port 80 (Nginx runs on port 80 inside container)
+      # Changed to 4201 because 4200 is commonly used by Angular dev server
+      - "4201:80"
+    environment:
+      # Frontend environment variables (if needed by the application)
+      API_URL: http://localhost:3000/v1
+      SSO_URL: https://portal.outboundsinc.com/api/v1/sso
+      SSO_PROD_ID: 5442e96b-659f-4332-8658-c5963ab7ab05
+    networks:
+      - vstellar-report-network
+
+networks:
+  cr-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+
