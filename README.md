@@ -8,6 +8,7 @@ Complete Docker Compose orchestration for the vStellar Report application stack,
 
 - **Docker** (version 20.10 or higher)
 - **Docker Compose** (version 2.0 or higher)
+- Ensure Docker is running on your machine before proceeding.
 
 ### Installation
 
@@ -23,6 +24,8 @@ Complete Docker Compose orchestration for the vStellar Report application stack,
    ```
 
 3. **Access the application**:
+   ⚠️ Important: The customer-facing application is served from the Frontend URL below. Please ensure this port is accessible and not blocked by any local firewall or security rules.
+   
    - **Frontend**: http://localhost:4201
    - **Backend API**: http://localhost:3000
    - **PostgreSQL**: localhost:5432
@@ -90,17 +93,6 @@ The `docker-compose.yml` file includes all necessary environment variables with 
   - Database: `vstellar-report-db`
   - Port: `5432`
 
-- **Backend**:
-  - Port: `3000`
-  - Environment: `production`
-  - JWT Secrets: `your-secret-jwt-key-change-this` (⚠️ **Change in production!**)
-
-- **Frontend**:
-  - Port: `4201`
-  - API URL: `http://localhost:3000/v1`
-  - SSO URL: `https://portal.outboundsinc.com/api/v1/sso`
-
-### Customizing Configuration
 
 To customize settings, edit the `docker-compose.yml` file directly or use environment variables:
 
@@ -131,9 +123,6 @@ docker compose down
 
 # Stop and remove volumes (⚠️ WARNING: deletes database data)
 docker compose down -v
-
-# Restart a specific service
-docker compose restart backend
 
 # View service status
 docker compose ps
@@ -184,14 +173,8 @@ docker compose up -d
 ⚠️ **Important for Production**:
 
 1. **Change Default Passwords**: Update `POSTGRES_PASSWORD` in `docker-compose.yml`
-2. **Update JWT Secrets**: Change `SECRET_JWT` and `REFRESH_JWT` to secure random strings
-3. **Restrict Database Access**: Consider removing PostgreSQL port exposure in production
-4. **Use Environment Variables**: For sensitive data, use environment variables instead of hardcoding
-
-Generate secure keys:
-```bash
-openssl rand -base64 32
-```
+2. **Restrict Database Access**: Consider removing PostgreSQL port exposure in production
+3. **Use Environment Variables**: For sensitive data, use environment variables instead of hardcoding
 
 ## 🐛 Troubleshooting
 
@@ -259,14 +242,6 @@ docker compose down
 docker rm vstellar-report-backend
 ```
 
-## 📁 Project Structure
-
-```
-compose-github/
-├── docker-compose.yml    # Main Docker Compose configuration
-├── run.sh                # Convenience startup script
-└── Setup-Guide.md        # Detailed setup guide
-```
 
 ## 🌐 Network Details
 
@@ -303,17 +278,6 @@ Database data is stored in a Docker volume (`postgres_data`) and persists across
 - Minimum 2GB RAM recommended
 - 5GB free disk space
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test with Docker Compose
-5. Submit a pull request
-
-## 📄 License
-
-[Add your license information here]
 
 ## 🆘 Support
 
@@ -321,10 +285,11 @@ For issues and questions:
 - Check the [Troubleshooting](#-troubleshooting) section
 - Review service logs: `docker compose logs`
 - Open an issue in the repository
+- visit: vstellar.io
 
 ---
 
 **Last Updated**: December 2025
 
-**Maintained by**: Outbounds Inc.
+**Maintained by**: OutboundsInc.
 
