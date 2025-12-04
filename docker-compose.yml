@@ -44,14 +44,7 @@ services:
       DB_PORT: 5432
       DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/vstellar-report-db
       
-      # JWT Configuration (CHANGE THESE IN PRODUCTION!)
-      SECRET_JWT: your-secret-jwt-key-change-this
-      REFRESH_JWT: your-refresh-jwt-key-change-this
-      
-      # Application Configuration
-      APP_VERSION: V1
-      ENV: production
-      SERVER_URL: http://backend:3000
+  
       
       # Email Configuration (Optional - leave empty if not needed)
       EMAIL_USER: ""
@@ -81,11 +74,6 @@ services:
       # Maps host port 4201 to container port 80 (Nginx runs on port 80 inside container)
       # Changed to 4201 because 4200 is commonly used by Angular dev server
       - "4201:80"
-    environment:
-      # Frontend environment variables (if needed by the application)
-      API_URL: http://localhost:3000/v1
-      SSO_URL: https://portal.outboundsinc.com/api/v1/sso
-      SSO_PROD_ID: 5442e96b-659f-4332-8658-c5963ab7ab05
     networks:
       - vstellar-report-network
 
